@@ -1,52 +1,72 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { format, isSameMonth } from 'date-fns';
 import { Task } from '../types';
 import { getMonthDays, getDayStatus } from '../utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Maximize2, Minimize2 } from 'lucide-react';
 
 interface CalendarGridProps {
   task: Task;
   currentDate: Date;
   onToggleDate: (date: Date) => void;
+  onMonthChange?: (date: Date) => void;
 }
 
-const CalendarGrid: React.FC<CalendarGridProps> = ({ task, currentDate, onToggleDate }) => {
+const CalendarGrid: React.FC<CalendarGridProps> = ({ task, currentDate, onToggleDate, onMonthChange }) => {
+  const [isCompact, setIsCompact] = useState(() => {
+    const saved = localStorage.getItem('calendar-compact-mode');
+    return saved === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('calendar-compact-mode', isCompact.toString());
+  }, [isCompact]);
+
   const days = getMonthDays(currentDate);
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="bg-white rounded-lg border border-border p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="font-semibold text-lg text-text">
-          {format(currentDate, 'MMMM yyyy')}
-        </h3>
-        <div className="flex gap-2 text-xs">
+    <div className={`bg-panel rounded-lg border border-border p-4 shadow-sm transition-all duration-300 ${isCompact ? 'max-w-sm' : 'max-w-xl'}`}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold text-base text-text">
+            {format(currentDate, 'MMMM yyyy')}
+          </h3>
+          <button
+            onClick={() => setIsCompact(!isCompact)}
+            className="p-1 text-muted hover:text-text hover:bg-border/50 rounded transition-colors"
+            title={isCompact ? "Switch to Normal View" : "Switch to Compact View"}
+          >
+            {isCompact ? <Maximize2 className="w-3 h-3" /> : <Minimize2 className="w-3 h-3" />}
+          </button>
+        </div>
+        <div className="flex gap-2 text-[10px]">
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-success rounded-sm"></div>
+            <div className="w-2.5 h-2.5 bg-success rounded-sm"></div>
             <span className="text-muted">Done</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-error rounded-sm"></div>
+            <div className="w-2.5 h-2.5 bg-error rounded-sm"></div>
             <span className="text-muted">Missed</span>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-4 mb-2">
+      <div className="grid grid-cols-7 gap-2 mb-1">
         {weekDays.map(day => (
-          <div key={day} className="text-center text-xs font-medium text-muted uppercase tracking-wider">
+          <div key={day} className="text-center text-[10px] font-medium text-muted uppercase tracking-wider">
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-3">
+      <div className="grid grid-cols-7 gap-2">
         {days.map(day => {
           const status = getDayStatus(day, task);
           const isCurrentMonth = isSameMonth(day, currentDate);
           
           if (!isCurrentMonth) {
-            return <div key={day.toISOString()} className="aspect-square" />;
+            return <div key={day.toISOString()} className={isCompact ? 'w-[48px] h-[48px]' : 'w-[72px] h-[72px]'} />;
           }
 
           let bgClass = '';
@@ -64,7 +84,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ task, currentDate, onToggle
               textClass = 'text-white';
               break;
             case 'today-pending':
-              bgClass = 'bg-white';
+              bgClass = 'bg-panel';
               borderClass = 'border-2 border-highlight';
               break;
             case 'future':
@@ -73,7 +93,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ task, currentDate, onToggle
               cursorClass = 'cursor-default';
               break;
             case 'not-created':
-              bgClass = 'bg-gray-100';
+              bgClass = 'bg-border/30';
               textClass = 'text-muted/30';
               cursorClass = 'cursor-default';
               break;
@@ -94,8 +114,9 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ task, currentDate, onToggle
                 }
               }}
               className={`
-                aspect-square rounded-md flex flex-col items-center justify-center relative
-                transition-colors duration-300
+                ${isCompact ? 'w-[48px] h-[48px]' : 'w-[72px] h-[72px]'}
+                rounded-md flex flex-col items-center justify-center relative
+                transition-all duration-300
                 ${bgClass} ${borderClass} ${cursorClass}
               `}
             >
@@ -106,7 +127,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({ task, currentDate, onToggle
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.2, ease: "easeOut" }}
-                  className={`text-sm font-medium ${textClass}`}
+                  className={`text-xs font-medium ${textClass}`}
                 >
                   {format(day, 'd')}
                 </motion.span>

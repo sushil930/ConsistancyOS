@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Zap, LayoutDashboard } from 'lucide-react';
+import { Plus, Trash2, Zap, LayoutDashboard, Moon, Sun } from 'lucide-react';
 import { Task } from '../types';
 import { formatDateKey } from '../utils';
 
@@ -9,6 +9,8 @@ interface SidebarProps {
   onSelectTask: (id: string | null) => void;
   onAddTask: (title: string) => void;
   onDeleteTask: (id: string, e: React.MouseEvent) => void;
+  darkMode: boolean;
+  toggleDarkMode: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -16,7 +18,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   selectedTaskId, 
   onSelectTask, 
   onAddTask,
-  onDeleteTask
+  onDeleteTask,
+  darkMode,
+  toggleDarkMode
 }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
@@ -48,8 +52,8 @@ const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => onSelectTask(null)}
           className={`w-full flex items-center gap-3 p-3 rounded-md transition-all duration-200 mb-6 ${
             selectedTaskId === null 
-              ? 'bg-white shadow-subtle text-text ring-1 ring-border' 
-              : 'text-muted hover:bg-gray-100 hover:text-text'
+              ? 'bg-background shadow-subtle text-text ring-1 ring-border' 
+              : 'text-muted hover:bg-border/30 hover:text-text'
           }`}
         >
           <LayoutDashboard className="w-5 h-5" />
@@ -70,8 +74,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               key={task.id}
               className={`w-full group flex items-center justify-between rounded-md transition-all duration-200 ${
                 isSelected 
-                  ? 'bg-white shadow-subtle text-text ring-1 ring-border' 
-                  : 'text-muted hover:bg-gray-100 hover:text-text'
+                  ? 'bg-background shadow-subtle text-text ring-1 ring-border' 
+                  : 'text-muted hover:bg-border/30 hover:text-text'
               }`}
             >
               {/* Selection Area - Sibling 1 */}
@@ -89,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               >
                 <div 
                   title={isCompletedToday ? "Completed today" : "Pending"}
-                  className={`w-2 h-2 rounded-full shrink-0 transition-colors duration-300 ${isCompletedToday ? 'bg-success' : 'bg-gray-200'}`} 
+                  className={`w-2 h-2 rounded-full shrink-0 transition-colors duration-300 ${isCompletedToday ? 'bg-success' : 'bg-border'}`} 
                 />
                 <span className="truncate font-medium">{task.title}</span>
               </div>
@@ -136,8 +140,16 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="p-4 border-t border-border">
-        <div className="flex items-center justify-between text-xs text-muted">
-          <span>{tasks.length} Active Habits</span>
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-muted">{tasks.length} Active Habits</span>
+          <button 
+            onClick={toggleDarkMode}
+            className="p-1.5 rounded-md text-muted hover:text-text hover:bg-border/50 transition-colors"
+            aria-label="Toggle dark mode"
+            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
       </div>
     </aside>

@@ -9,11 +9,36 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+      :root {
+        --color-background: #FFFFFF;
+        --color-panel: #FAFAFA;
+        --color-text: #1A1A1A;
+        --color-muted: #555555;
+        --color-border: #E5E5E5;
+        --color-success: #37B26C;
+        --color-error: #E05656;
+        --color-highlight: #4A90E2;
+        --color-future: #F3F3F3;
+      }
+
+      .dark {
+        --color-background: #0F172A;
+        --color-panel: #1E293B;
+        --color-text: #F1F5F9;
+        --color-muted: #94A3B8;
+        --color-border: #334155;
+        --color-success: #34D399;
+        --color-error: #F87171;
+        --color-highlight: #60A5FA;
+        --color-future: #1E293B;
+      }
+
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #FFFFFF;
-        color: #1A1A1A;
+        background-color: var(--color-background);
+        color: var(--color-text);
         -webkit-font-smoothing: antialiased;
+        transition: background-color 0.3s, color 0.3s;
       }
       /* Custom scrollbar for a cleaner look */
       ::-webkit-scrollbar {
@@ -24,27 +49,28 @@
         background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background: #E5E5E5;
+        background: var(--color-border);
         border-radius: 4px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #D4D4D4;
+        background: var(--color-muted);
       }
     </style>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
-              background: '#FFFFFF',
-              panel: '#FAFAFA',
-              text: '#1A1A1A',
-              muted: '#555555',
-              border: '#E5E5E5',
-              success: '#37B26C',
-              error: '#E05656',
-              highlight: '#4A90E2',
-              future: '#F3F3F3', // Slightly lighter than standard grey for future
+              background: 'var(--color-background)',
+              panel: 'var(--color-panel)',
+              text: 'var(--color-text)',
+              muted: 'var(--color-muted)',
+              border: 'var(--color-border)',
+              success: 'var(--color-success)',
+              error: 'var(--color-error)',
+              highlight: 'var(--color-highlight)',
+              future: 'var(--color-future)',
             },
             boxShadow: {
               'subtle': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',

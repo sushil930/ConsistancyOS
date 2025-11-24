@@ -4,6 +4,7 @@ export interface Task {
   notes: string;
   createdAt: number; // Timestamp
   completedDates: Record<string, boolean>; // Key: YYYY-MM-DD
+  achievements?: string[]; // Array of unlocked achievement IDs
 }
 
 export interface DayStatus {
@@ -19,4 +20,6 @@ export interface Stats {
   level: number;
   progressToNextLevel: number;
   xp: number;
+  completionRate: number;
+  nextLevelXP: number;
 }
