@@ -20,6 +20,4 @@ export interface Stats {
   level: number;
   progressToNextLevel: number;
   xp: number;
-  completionRate: number;
-  nextLevelXP: number;
 }
